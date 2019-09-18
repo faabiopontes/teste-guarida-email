@@ -13,17 +13,35 @@ class ApiService
         $this->client = new Client();
     }
 
-    public function parseInvoiceData($invoiceData)
+    public function parseInvoice($invoice_data)
     {
-        $parsedInvoiceData = [];
-        return $parsedInvoiceData;
+        $parsed_invoice = [];
+        foreach ($invoice_data as $invoice_data_attribute) {
+            $attribute_array = array('name' => $invoice_data_attribute['key']);
+            if (array_key_exists('filename', $invoice_data_attribute)) {
+                $attribute_array['contents'] = $invoice_data_attribute['contents'];
+                $attribute_array['filename'] = $invoice_data_attribute['filename'];
+            } else {
+                $attribute_array['contents'] = $invoice_data_attribute['value'];
+            }
+            $parsed_invoice[] = $attribute_array;
+        }
+        return $parsed_invoice;
     }
 
-    public function sendInvoice($invoiceData)
+    public function sendArrayInvoices($array_invoices)
     {
-        $parsedInvoiceData = $this->parseInvoiceData($invoiceData);
+        foreach ($array_invoices as $invoice) {
+            $parsed_invoice = $this->parseInvoice($invoice);
+            dd($parsed_invoice);
+            $this->sendInvoice($parsed_invoice);
+        }
+    }
+
+    public function sendInvoice($parsed_invoice)
+    {
         $this->client->request('POST', env('API_ENDPOINT'), [
-            'multipart' => $parsedInvoiceData
+            'multipart' => $parsed_invoice
         ]);
     }
 }

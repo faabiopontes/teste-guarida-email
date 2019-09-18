@@ -13,11 +13,10 @@ class InvoicesController extends Controller
     {
         $this->service = $service;
         $this->api_service = $api_service;
-
     }
-    public function checkNewInvoices()
+    public function checkNew()
     {
         $invoices = $this->service->getArrayNewInvoices();
-        // $this->api_service->send($invoices);
+        $this->api_service->sendArrayInvoices($invoices);
     }
 }
