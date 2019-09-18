@@ -14,4 +14,4 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/verificarNotasFiscais', 'NotasFiscaisController@verificarNovas');
+Route::get('/verificarNotasFiscais', 'InvoicesController@checkNew');

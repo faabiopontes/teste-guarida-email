@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Webklex\IMAP\Facades\Client;
+use App\Http\Services\InvoicesService;
+use App\Http\Services\ApiService;
 
-class NotasFiscaisController extends Controller
+
+class InvoicesController extends Controller
 {
-    public function verificarNovas(Request $e)
+    function __construct(InvoicesService $service, ApiService $api_service)
     {
-        $oClient = Client::account('default');
+        $this->service = $service;
+        $this->api_service = $api_service;
+
+    }
+    public function checkNew()
+    {
         try {
-            $oClient->connect();
-            $folder = $oClient->getFolder('INBOX');
-            $messages = $folder->messages()->unseen()->leaveUnread()->get();
+            $messages =  $this->service->getMessagesSinceYesterday();
+
             foreach ($messages as $message) {
                 $attachments = $message->getAttachments();
                 $hasAttachment = $attachments->count() > 0;
