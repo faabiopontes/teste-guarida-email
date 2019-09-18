@@ -10,7 +10,20 @@ class ApiService
 
     function __construct()
     {
-        $this->client = Client();
-        $this->base_api = env('API_ENDPOINT');
+        $this->client = new Client();
+    }
+
+    public function parseInvoiceData($invoiceData)
+    {
+        $parsedInvoiceData = [];
+        return $parsedInvoiceData;
+    }
+
+    public function sendInvoice($invoiceData)
+    {
+        $parsedInvoiceData = $this->parseInvoiceData($invoiceData);
+        $this->client->request('POST', env('API_ENDPOINT'), [
+            'multipart' => $parsedInvoiceData
+        ]);
     }
 }
