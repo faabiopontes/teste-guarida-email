@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  myapp:
+    tty: true
+    image: bitnami/laravel:6-debian-9
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+    # privileged: true # Privileged mode could be required to run this container under Windows
