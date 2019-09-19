@@ -1,11 +1,19 @@
-version: '2'
+version: "3.3"
 
 services:
-  myapp:
-    tty: true
-    image: bitnami/laravel:6-debian-9
+  nginx:
+    container_name: nginx
+    build: images/nginx
+    command: nginx -g "daemon off;"
+    links:
+      - php
     ports:
-      - 3000:3000
+      - "9001:80"
+
+  php:
+    container_name: php
+    build: images/php
     volumes:
-      - ./:/app
-    # privileged: true # Privileged mode could be required to run this container under Windows
+      - ./laravel:/var/www/html
+    working_dir: /var/www/html/app/public
+    command: php-fpm
