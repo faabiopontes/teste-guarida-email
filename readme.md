@@ -49,8 +49,8 @@ Você pode optar rodar de duas formas
 
 Este comando ira executar uma série de passos que você poderá acompanhar via terminal, referente a:
 
-1. Build
-2. Install das dependências do framework Laravel
+1. Build dos containers PHP e Nginx
+2. Instalação das dependências do framework Laravel
 3. O ambiente pode ser acessado no http://localhost:9001
 
 ### 2) Execute os seguintes passos separadamente no seu terminal dentro da pasta do projeto:
@@ -63,11 +63,25 @@ Este comando ira executar uma série de passos que você poderá acompanhar via 
 
 O ambiente pode ser acessado no http://localhost:9001
 
+### Variaveis de Ambiente
+
+Assim que o ambiente estiver rodando, o arquivo com as variaveis de ambiente será criado em `laravel/.env`
+
+Abaixo uma explicação sobre variaveis de ambiente que devem ser modificadas
+
+- IMAP_HOST: É o host do e-mail que você vai receber as Notas Fiscais
+- IMAP_PORT: É a porta de acesso IMAP ao seu e-mail, apesar de haver um padrão, verifique com seu provedor possíveis especificidades
+- IMAP_USERNAME: Seu usuário de e-mail, como faabiopontes@gmail.com
+- IMAP_PASSWORD: A senha, ou chave de aplicação como no caso do Gmail, do seu E-mail, verifique com seu provedor possíveis especificidades em caso de problemas
+- API_ENDPOINT: É o endpoint que serão enviados as Notas Fiscais e seus Anexos. Caso você execute o método de verificação e todas as mensagens apontem falha, é bem possível que o endereço não esteja preenchido corretamente
+
 ### Importante
 
-Sempre fique atento que não exista outro processo rodando na porta 9001 pois é a porta que o Nginx fará o espelhamento ao executar o docker
+- Sempre fique atento que não exista outro processo rodando na porta 9001 pois é a porta que o Nginx fará o espelhamento ao executar o docker
+- Serão buscadas mensagens enviadas nos últimos 2 dias no formato indicado, pois aumentando o número de dias aumentava consideravelmente o tempo de busca das mensagens
+- São filtradas mensagens que estão no formato e não estejam lidas, assim que as mensagens são enviadas para a API estas são marcadas como lidas e movidas para uma pasta "Notas Fiscais Enviadas", que se não existir será criada em seu e-mail
 
 ### Todo
 
 - Testar endpoint e métodos dos serviços afim de aumentar code coverage
-- Melhorar a resposta ao usuário em caso de erros ao longo do processo de parseamento
+- Melhorar a resposta ao usuário em caso de erros ao longo do processo de verificação e envio

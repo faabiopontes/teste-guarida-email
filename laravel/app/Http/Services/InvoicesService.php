@@ -8,8 +8,16 @@ class InvoicesService
 {
     function __construct()
     {
-        $this->client = Client::account('default');
-        $this->client->connect();
+        try {
+            $this->client = Client::account('default');
+            $this->client->connect();
+            $this->client->createFolder('Notas Fiscais Enviadas');
+        } catch (\Exception $e) {
+            return [
+                'error' => true,
+                'exception' => $e
+            ];
+        }
     }
 
     public function getMessagesSinceYesterday()
@@ -61,13 +69,14 @@ class InvoicesService
     public function getArrayNewInvoices()
     {
         try {
-            $messages =  $this->getMessagesSinceYesterday();
+            $messages = $this->getMessagesSinceYesterday();
             $array_messages = [];
 
             foreach ($messages as $message) {
                 if (!$this->isValidMessage($message)) continue;
 
                 $array_message_attributes = $this->getDefaultInvoiceAttributes();
+                $array_messag_attributes['message'] = $message;
 
                 $text_body = $message->getTextBody();
                 $lines_body = explode("\r\n", $text_body);
@@ -94,9 +103,12 @@ class InvoicesService
             }
 
             return $array_messages;
-
-            // $message->setFlag('Seen');
-            // $message->moveToFolder('Notas Fiscais');
-        } catch (\Exception $e) { }
+        } catch (\Exception $e) {
+            return [
+                'error' => true,
+                'message' => 'Não foi possível conectar em sua conta de e-mail. As variaveis de ambiente estão atualizadas?',
+                'exception' => $e
+            ];
+        }
     }
 }

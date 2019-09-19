@@ -31,17 +31,32 @@ class ApiService
 
     public function sendArrayInvoices($array_invoices)
     {
+        $success = $failed = 0;
         foreach ($array_invoices as $invoice) {
             $parsed_invoice = $this->parseInvoice($invoice);
-            dd($parsed_invoice);
-            $this->sendInvoice($parsed_invoice);
+            $response = $this->sendInvoice($parsed_invoice);
+            if (array_key_exists('error', $response)) {
+                $failed++;
+            } else {
+                $invoice['message']->setFlag('Seen');
+                $invoice['message']->moveToFolder('Notas Fiscais Enviadas');
+                $success++;
+            }
         }
+        return compact('success', 'failed');
     }
 
     public function sendInvoice($parsed_invoice)
     {
-        $this->client->request('POST', env('API_ENDPOINT'), [
-            'multipart' => $parsed_invoice
-        ]);
+        try {
+            $this->client->request('POST', env('API_ENDPOINT'), [
+                'multipart' => $parsed_invoice
+            ]);
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return [
+                'error' => true,
+            ];
+        }
     }
 }

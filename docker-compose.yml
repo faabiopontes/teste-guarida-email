@@ -12,8 +12,9 @@ services:
 
   php:
     container_name: php
+    user: root
     build: images/php
     volumes:
       - ./laravel:/var/www/html
-    working_dir: /var/www/html/app/public
+    working_dir: /var/www/html
     command: php-fpm
